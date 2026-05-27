@@ -29,16 +29,14 @@ If you want to switch from USDC to SOL or USDT, you just need to swap the hardco
 ## Returning 20% of fees
 
 Actually, Save Finance charges a 0.05% total fee from flash loans. But the protocol architecture is designed to reward front-end integrators like a host fee mechanism
-So, a total fee spliting on
-1 -  80% goes directly to the protocol treasury (fee_receiver_ata).
+So, a total fee spliting on<br>
+1 - 80% goes directly to the protocol treasury (fee_receiver_ata).<br>
 2 - 20% goes to the integrator (host_fee_receiver).
 
 ## How this code exploits it:
-In the repay_ix accounts vector, we pass our own wallet's ATA as the host_fee_receiver:
+In the repay_ix accounts vector, we pass our own wallet's ATA as the host_fee_receiver. Thus, by acting as our own host, we automatically save 20% of the loan costs.<br>
 
-By acting as our own host, we automatically save 20% of the loan costs. Thus 20% of it is ref back to our wallet
-
-Please, tips me =)
+Please, tips me =)<br>
 DdKQPiHdhgCACMvPe1UKH9aJ8KY415YW9eNC7ah6nzS7
 
 ## Created by [@trinitycult](https://t.me/trinitycult)
