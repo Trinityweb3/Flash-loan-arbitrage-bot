@@ -2,7 +2,7 @@
 
 It's a mainnet-ready flash loan execution script written in Rust.
 
-## Proof of work (TxID)
+## TxID
 https://solscan.io/tx/3TeBp5d6FkY3fvWCiG46CTtNrY9cWXNYEdqS56JmLcJhq714e6t3gvR6XdX8pGp4oitW2LvffSQ8jZeoa3Pp33SJ
 
 ## Setup
