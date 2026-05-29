@@ -9,7 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let loan_amount: u64 = 10_000_000; 
 
     match flashloan::execute_flash_loan(&rpc_url, &private_key, loan_amount).await {
-        Ok(_) => println!("Flash loan successfull!"),
+        Ok(_) => {},
         Err(e) => eprintln!("process crashed with error: {:?}", e),
     }
     Ok(())
