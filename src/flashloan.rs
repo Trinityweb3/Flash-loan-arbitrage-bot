@@ -1,8 +1,4 @@
-use crate::types::{
-    AssetConfig,
-    ProtocolConfig,
-    User
-};
+use crate::types::*;
 
 use solana_client::nonblocking::rpc_client::RpcClient; // for async feature
 use solana_sdk::commitment_config::CommitmentConfig;
@@ -18,8 +14,6 @@ use spl_associated_token_account::instruction::create_associated_token_account_i
 use solana_sdk::system_instruction;
 use spl_token::instruction::sync_native;
 use spl_associated_token_account::get_associated_token_address;
-
-
 
 pub async fn execute_flash_loan(user: User, protocol_config: ProtocolConfig, asset: AssetConfig) -> Result<(), Box<dyn std::error::Error>> {
     let client: RpcClient = RpcClient::new_with_commitment(user.rpc_url, CommitmentConfig::confirmed());
