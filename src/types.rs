@@ -17,6 +17,17 @@ pub const SOL_LIQUIDITY_MINT: &str = "So1111111111111111111111111111111111111111
 
 pub const FEE_RECEIVER: &str = "9RuqAN42PTUi9ya59k9suGATrkqzvb9gk2QABJtQzGP5";
 
+pub const ORCA_MARKET: &str = "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE";
+
+pub const JITO_TIP1: &str = "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5";
+pub const JITO_TIP2: &str = "HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe";
+pub const JITO_TIP3: &str = "Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY";
+pub const JITO_TIP4: &str = "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49";
+pub const JITO_TIP5: &str = "DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh";
+pub const JITO_TIP6: &str = "ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt";
+pub const JITO_TIP7: &str = "DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL";
+pub const JITO_TIP8: &str = "3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT";
+
 pub struct AssetConfig {
     pub loan_amount: u64,
     pub reserve: Pubkey,
@@ -35,4 +46,8 @@ pub struct ProtocolConfig {
 pub struct User {
     pub rpc_url: String,
     pub private_key: String
+}
+
+pub struct SwapPools {
+    pub orca_pool: Pubkey
 }
