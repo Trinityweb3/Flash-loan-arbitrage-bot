@@ -4,9 +4,9 @@ It's a mainnet-ready flash loan execution script written in Rust.
 
 ## TxIDs<br>
 ### WSOL TX<br>
-https://solscan.io/tx/2SiYSzcUNi8qp243iDXwSBWfew8V35dtS4rvUs4eVrRV56gDQNP6vqV9evyeRJRG4yK7G5g8CjsAYPAptHgSfF3x<br>
+https://solscan.io/tx/4fevWabW2bT7g3nzfhtrZE7JND7w6RJYSt7vi9tNWCFeASvi8GGHjTxcYWZ51d9xr8sg17P3HzbVwQ2EoFXiuZex<br>
 ### USDC TX<br>
-https://solscan.io/tx/2jhX9WtmZpLcxcSxyoopKpVdBL5oPuTnAP7x6qifyFKJEyhjPKbhE8dkCG4ojbz8Yuood1KzAKfcvgAKgnvo3QyD
+https://solscan.io/tx/4PFwD4djdnEMdiQZUyrf3EJtGYaFY7z5qu2NLCGbHaq8rHHGtECdBwmA9tBsUAcghgHmaykY1Vx9gYpmVJh31fQY<br>
 
 ## Setup
 
