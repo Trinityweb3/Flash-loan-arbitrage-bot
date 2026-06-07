@@ -17,7 +17,7 @@ pub const SOL_LIQUIDITY_MINT: &str = "So1111111111111111111111111111111111111111
 
 pub const FEE_RECEIVER: &str = "9RuqAN42PTUi9ya59k9suGATrkqzvb9gk2QABJtQzGP5";
 
-pub const ORCA_MARKET: &str = "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE";
+pub const ORCA_SOL_USDC_MARKET: &str = "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE";
 
 pub const JITO_TIP1: &str = "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5";
 pub const JITO_TIP2: &str = "HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe";
@@ -49,5 +49,5 @@ pub struct User {
 }
 
 pub struct SwapPools {
-    pub orca_pool: Pubkey
+    pub orca_pool: String
 }
