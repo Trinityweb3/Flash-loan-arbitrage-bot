@@ -1,4 +1,4 @@
-# Solana Flash Loan
+# Solana Arbitrage Bot
 
 It's a mainnet-ready flash loan execution script written in Rust which use Save Finance, DEX LP Swaps and Jito Tips
 
