@@ -4,7 +4,7 @@ mod flashloan;
 use types::*;
 
 use flashloan::execute_flash_loan;
-use std::str::FromStr;
+use std::{any::type_name, str::FromStr};
 use solana_sdk::pubkey::Pubkey;
 
 #[tokio::main]
@@ -30,7 +30,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         is_sol: true,
     };
 
-    match execute_flash_loan(user, protocol_config, asset).await {
+    let pools: SwapPools = SwapPools {
+        orca_pool: types::ORCA_SOL_USDC_MARKET.to_string()
+    };
+
+    match execute_flash_loan(user, protocol_config, asset, pools).await {
         Ok(_) => {},
         Err(e) => eprintln!("process crashed with error: {:?}", e),
     }
