@@ -16,7 +16,8 @@ First, do:
 Second, create a .env file in the your project root.
 
 RPC_URL=https://helius-rpc.com/xxxxxxx<br>
-PRIVATE_KEY=xxxxx(base58)
+PRIVATE_KEY=xxxxx(base58)<br>
+ALT_ADDRESS=xxx (Address lookup tables. First create it)
 
 And compile & start a script using ```cargo run``` 
 
