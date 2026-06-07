@@ -1,6 +1,6 @@
 # Solana Flash Loan
 
-It's a mainnet-ready flash loan execution script written in Rust.
+It's a mainnet-ready flash loan execution script written in Rust which use Save Finance, DEX LP Swaps and Jito Tips
 
 ## TxIDs<br>
 ### WSOL TX<br>
