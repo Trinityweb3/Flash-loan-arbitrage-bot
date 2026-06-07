@@ -11,7 +11,7 @@ https://solscan.io/tx/4PFwD4djdnEMdiQZUyrf3EJtGYaFY7z5qu2NLCGbHaq8rHHGtECdBwmA9t
 ## Setup
 
 First, do:
-```git clone https://github.com/Trinityweb3/Flash-loan-impl-example```
+```git clone https://github.com/Trinityweb3/Flash-loan-arbitrage-bot```
 
 Second, create a .env file in the your project root.
 
