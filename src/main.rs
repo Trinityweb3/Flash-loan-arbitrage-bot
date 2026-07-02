@@ -4,7 +4,7 @@ mod flashloan;
 use types::*;
 
 use flashloan::execute_flash_loan;
-use std::{any::type_name, str::FromStr};
+use std::str::FromStr;
 use solana_sdk::pubkey::Pubkey;
 
 #[tokio::main]
@@ -24,10 +24,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let asset: AssetConfig = AssetConfig {
         loan_amount: 1_000_000,
-        reserve: Pubkey::from_str(types::SOL_RESERVE)?,
-        liquidity_supply: Pubkey::from_str(types::SOL_LIQUIDITY_SUPPLY)?,
-        liquidity_mint: Pubkey::from_str(types::SOL_LIQUIDITY_MINT)?,
-        is_sol: true,
+        reserve: Pubkey::from_str(types::USDC_RESERVE)?,
+        liquidity_supply: Pubkey::from_str(types::USDC_LIQUIDITY_SUPPLY)?,
+        liquidity_mint: Pubkey::from_str(types::USDC_LIQUIDITY_MINT)?,
+        is_sol: false,
     };
 
     let pools: SwapPools = SwapPools {
