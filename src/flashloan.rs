@@ -1,5 +1,5 @@
 use crate::types::*;
-use solana_rpc_client::nonblocking::rpc_client::RpcClient; // usding nonblocking for async 
+use solana_rpc_client::nonblocking::rpc_client::RpcClient;
 use solana_commitment_config::CommitmentConfig;
 use solana_system_interface::instruction as system_instruction;
 use solana_sdk::{
@@ -16,7 +16,7 @@ use spl_associated_token_account::{
     instruction::create_associated_token_account_idempotent,
 };
 use spl_token::instruction::sync_native;
-use orca_whirlpools::{swap_instructions, SwapConfig, SwapType::ExactIn};
+use orca_whirlpools::{swap_instructions, SwapType::ExactIn};
 use rand::seq::SliceRandom;
 use std::str::FromStr;
 
@@ -40,12 +40,6 @@ pub async fn execute_flash_loan(
 
     let wsol_mint = Pubkey::from_str_const(SOL_LIQUIDITY_MINT);
     let usdc_mint: Pubkey = Pubkey::from_str_const(USDC_LIQUIDITY_MINT);
-
-    let swap_cfg = SwapConfig {
-        slippage_tolerance_bps: Some(10),
-        signer: Some(payer.pubkey().to_bytes().into()),
-        whirlpool_deployment: None,
-    };
 
     // jito tip
     let tips: [&str; 8] = [
@@ -74,12 +68,14 @@ pub async fn execute_flash_loan(
         println!("quote: SOL -> USDC...");
         let swap_fwd: orca_whirlpools::SwapInstructions = swap_instructions(
             &client,
-            Pubkey::from_str_const(ORCA_SOL_USDC_MARKET).to_bytes().into(),
+            Pubkey::from_str_const(ORCA_SOL_USDC_MARKET),
             loan_amount,
-            Pubkey::from_str_const(SOL_LIQUIDITY_MINT).to_bytes().into(),
+            Pubkey::from_str_const(SOL_LIQUIDITY_MINT),
             ExactIn,
-            swap_cfg.clone(),
+            Some(10u16),
+            Some(payer.pubkey()),
         ).await?;
+        
         let usdc_received = match &swap_fwd.quote {
             orca_whirlpools::SwapQuote::ExactIn(q) => q.token_est_out,
             orca_whirlpools::SwapQuote::ExactOut(q) => q.token_est_in,
@@ -91,12 +87,14 @@ pub async fn execute_flash_loan(
         println!("quote: USDC -> SOL...");
         let swap_back: orca_whirlpools::SwapInstructions = swap_instructions(
             &client,
-            Pubkey::from_str_const(&pools.orca_pool).to_bytes().into(),
+            Pubkey::from_str(&pools.orca_pool)?,
             usdc_received,
-            Pubkey::from_str_const(USDC_LIQUIDITY_MINT).to_bytes().into(),
+            Pubkey::from_str_const(USDC_LIQUIDITY_MINT),
             ExactIn,
-            swap_cfg.clone(),
+            Some(10u16),
+            Some(payer.pubkey()),
         ).await?;
+        
         let sol_received = match &swap_back.quote {
             orca_whirlpools::SwapQuote::ExactIn(q) => q.token_est_out,
             orca_whirlpools::SwapQuote::ExactOut(q) => q.token_est_in,
@@ -165,7 +163,7 @@ pub async fn execute_flash_loan(
         signers.extend(swap_fwd.additional_signers.iter());
         signers.extend(swap_back.additional_signers.iter());
 
-        let blockhash: solana_message::Hash = client.get_latest_blockhash().await?;
+        let blockhash = client.get_latest_blockhash().await?;
         let v0_msg: v0::Message = v0::Message::try_compile(&payer.pubkey(), &instructions, &[lut], blockhash)?;
         let vtx: VersionedTransaction = VersionedTransaction::try_new(VersionedMessage::V0(v0_msg), &signers)?;
 
@@ -195,12 +193,14 @@ pub async fn execute_flash_loan(
         println!("quote: USDC -> SOL...");
         let swap_fwd = swap_instructions(
             &client,
-            Pubkey::from_str_const(&pools.orca_pool).to_bytes().into(),
+            Pubkey::from_str(&pools.orca_pool)?,
             loan_amount,
-            Pubkey::from_str_const(USDC_LIQUIDITY_MINT).to_bytes().into(),
+            Pubkey::from_str_const(USDC_LIQUIDITY_MINT),
             ExactIn,
-            swap_cfg.clone(),
+            Some(10u16),
+            Some(payer.pubkey()),
         ).await?;
+        
         let sol_received = match &swap_fwd.quote {
             orca_whirlpools::SwapQuote::ExactIn(q) => q.token_est_out,
             orca_whirlpools::SwapQuote::ExactOut(q) => q.token_est_in,
@@ -212,11 +212,12 @@ pub async fn execute_flash_loan(
         println!("quote: SOL -> USDC...");
         let swap_back = swap_instructions(
             &client,
-            Pubkey::from_str_const(ORCA_SOL_USDC_MARKET).to_bytes().into(),
+            Pubkey::from_str_const(ORCA_SOL_USDC_MARKET),
             sol_received,
-            Pubkey::from_str_const(SOL_LIQUIDITY_MINT).to_bytes().into(),
+            Pubkey::from_str_const(SOL_LIQUIDITY_MINT),
             ExactIn,
-            swap_cfg.clone(),
+            Some(10u16),
+            Some(payer.pubkey()),
         ).await?;
 
         let usdc_received: u64 = match &swap_back.quote {
@@ -287,7 +288,7 @@ pub async fn execute_flash_loan(
         signers.extend(swap_fwd.additional_signers.iter());
         signers.extend(swap_back.additional_signers.iter());
 
-        let blockhash: solana_message::Hash = client.get_latest_blockhash().await?;
+        let blockhash = client.get_latest_blockhash().await?;
         let v0_msg: v0::Message = v0::Message::try_compile(&payer.pubkey(), &instructions, &[lut], blockhash)?;
         let vtx: VersionedTransaction = VersionedTransaction::try_new(VersionedMessage::V0(v0_msg), &signers)?;
 
