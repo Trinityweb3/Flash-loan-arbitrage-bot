@@ -24,10 +24,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let asset: AssetConfig = AssetConfig {
         loan_amount: 1_000_000,
-        reserve: Pubkey::from_str(types::USDC_RESERVE)?,
-        liquidity_supply: Pubkey::from_str(types::USDC_LIQUIDITY_SUPPLY)?,
-        liquidity_mint: Pubkey::from_str(types::USDC_LIQUIDITY_MINT)?,
-        is_sol: false,
+        reserve: Pubkey::from_str(types::SOL_RESERVE)?,
+        liquidity_supply: Pubkey::from_str(types::SOL_LIQUIDITY_SUPPLY)?,
+        liquidity_mint: Pubkey::from_str(types::SOL_LIQUIDITY_MINT)?,
+        is_sol: true,
     };
 
     let pools: SwapPools = SwapPools {
