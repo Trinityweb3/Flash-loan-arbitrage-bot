@@ -9,6 +9,10 @@ use solana_sdk::{
     signer::Signer,
     sysvar,
 };
+
+use solana_address_lookup_table_interface::instruction::extend_lookup_table;
+use std::collections::HashSet;
+
 use solana_message::{v0, VersionedMessage, AddressLookupTableAccount};
 use solana_sdk::transaction::VersionedTransaction;
 use spl_associated_token_account::{
@@ -50,16 +54,15 @@ pub async fn execute_flash_loan(
     let jito_tip_ix: Instruction = system_instruction::transfer(&payer.pubkey(), &tip_pubkey, 10_000);
 
     // alt
-    let alt_address: Pubkey = Pubkey::from_str(
-        &std::env::var("ALT_ADDRESS").expect("ALT_ADDRESS not set in .env")
-    )?;
+    let alt_address: Pubkey = Pubkey::from_str(&std::env::var("ALT_ADDRESS").expect("ALT_ADDRESS not set in .env"))?;
     let lut_account: solana_sdk::account::Account = client.get_account(&alt_address).await?;
+
     let lut_addresses: Vec<Pubkey> = lut_account.data[56..]
         .chunks(32)
         .filter(|c| c.len() == 32)
         .map(|c| Pubkey::try_from(c).unwrap())
         .collect();
-    let lut: AddressLookupTableAccount = AddressLookupTableAccount { key: alt_address, addresses: lut_addresses };
+    let mut lut: AddressLookupTableAccount = AddressLookupTableAccount { key: alt_address, addresses: lut_addresses };
 
     if asset.is_sol {
         let wsol_ata: Pubkey = get_associated_token_address(&payer.pubkey(), &wsol_mint);
@@ -104,15 +107,25 @@ pub async fn execute_flash_loan(
             sol_received as f64 / 1_000_000_000.0);
         println!("pnl: {:.6} SOL", (sol_received as i64 - loan_amount as i64) as f64 / 1_000_000_000.0);
 
+        let needed_accounts: HashSet<Pubkey> = swap_fwd.instructions.iter()
+            .chain(swap_back.instructions.iter())
+            .flat_map(|ix| ix.accounts.iter().map(|a| a.pubkey))
+            .collect();
+
+        ensure_lut_has_accounts(&client, &payer, alt_address, &mut lut, &needed_accounts).await?;
+
         let mut instructions: Vec<Instruction> = Vec::new();
 
-        instructions.push(create_associated_token_account_idempotent(
+        /* instructions.push(create_associated_token_account_idempotent(
             &payer.pubkey(), &payer.pubkey(), &wsol_mint, &spl_token::id(),
         ));
         instructions.push(create_associated_token_account_idempotent(
             &payer.pubkey(), &payer.pubkey(), &usdc_mint, &spl_token::id(),
-        ));
-        instructions.push(system_instruction::transfer(&payer.pubkey(), &wsol_ata, 10_000_000));
+        ));*/
+        
+        // Uncomment this if you haven't needed ATA's
+
+        instructions.push(system_instruction::transfer(&payer.pubkey(), &wsol_ata, (loan_amount as f64 * 1.05) as u64));
         instructions.push(sync_native(&spl_token::id(), &wsol_ata)?);
 
         let mut borrow_data: Vec<u8> = Vec::with_capacity(9);
@@ -138,7 +151,7 @@ pub async fn execute_flash_loan(
         let mut repay_data = Vec::with_capacity(10);
         repay_data.push(20u8);
         repay_data.extend_from_slice(&loan_amount.to_le_bytes());
-        repay_data.push(4);
+        repay_data.push(2);
         instructions.push(Instruction {
             program_id,
             accounts: vec![
@@ -230,15 +243,22 @@ pub async fn execute_flash_loan(
             usdc_received as f64 / 1_000_000.0);
         println!("pnl: {:.6} USDC", (usdc_received as i64 - loan_amount as i64) as f64 / 1_000_000.0);
 
+        let needed_accounts: HashSet<Pubkey> = swap_fwd.instructions.iter()
+            .chain(swap_back.instructions.iter())
+            .flat_map(|ix| ix.accounts.iter().map(|a| a.pubkey))
+            .collect();
+
+        ensure_lut_has_accounts(&client, &payer, alt_address, &mut lut, &needed_accounts).await?;
+
         // build ixs
         let mut instructions: Vec<Instruction> = Vec::new();
 
-        instructions.push(create_associated_token_account_idempotent(
+        /* instructions.push(create_associated_token_account_idempotent(
             &payer.pubkey(), &payer.pubkey(), &usdc_mint, &spl_token::id(),
         ));
         instructions.push(create_associated_token_account_idempotent(
             &payer.pubkey(), &payer.pubkey(), &wsol_mint, &spl_token::id(),
-        ));
+        )); */
 
         let mut borrow_data: Vec<u8> = Vec::with_capacity(9);
         borrow_data.push(19u8);
@@ -263,7 +283,7 @@ pub async fn execute_flash_loan(
         let mut repay_data: Vec<u8> = Vec::with_capacity(10);
         repay_data.push(20u8);
         repay_data.extend_from_slice(&loan_amount.to_le_bytes());
-        repay_data.push(2); //borrow byte
+        repay_data.push(0); //borrow byte
         instructions.push(Instruction {
             program_id,
             accounts: vec![
@@ -310,6 +330,55 @@ pub async fn execute_flash_loan(
             }
         }
     }
+
+    Ok(())
+}
+
+async fn ensure_lut_has_accounts(
+    client: &RpcClient,
+    payer: &Keypair,
+    alt_address: Pubkey,
+    lut: &mut AddressLookupTableAccount,
+    needed: &HashSet<Pubkey>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let existing: HashSet<Pubkey> = lut.addresses.iter().cloned().collect();
+    let missing: Vec<Pubkey> = needed
+        .iter()
+        .cloned()
+        .filter(|k| !existing.contains(k) && *k != payer.pubkey())
+        .collect();
+
+    if missing.is_empty() {
+        return Ok(());
+    }
+
+    println!("ALT: добавляю {} новых адресов...", missing.len());
+    for chunk in missing.chunks(20) {
+        let ix = extend_lookup_table(
+            alt_address,
+            payer.pubkey(),
+            Some(payer.pubkey()),
+            chunk.to_vec(),
+        );
+        let blockhash = client.get_latest_blockhash().await?;
+        let tx = solana_sdk::transaction::Transaction::new_signed_with_payer(
+            &[ix],
+            Some(&payer.pubkey()),
+            &[payer],
+            blockhash,
+        );
+        let sig = client.send_and_confirm_transaction(&tx).await?;
+        println!("  extend tx: {sig}");
+    }
+
+   
+    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    let lut_account = client.get_account(&alt_address).await?;
+    lut.addresses = lut_account.data[56..]
+        .chunks(32)
+        .filter(|c| c.len() == 32)
+        .map(|c| Pubkey::try_from(c).unwrap())
+        .collect();
 
     Ok(())
 }
