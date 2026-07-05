@@ -15,11 +15,13 @@ solana-message  = "2.1"
 solana-system-interface= "1.0"
 spl-token = "7.0"
 spl-associated-token-account = "6.0"
-
+solana-address-lookup-table-interface = "2.2"
 orca_whirlpools = "2.0"
+async-trait = "0.1"
 
 [profile.release]
 opt-level = 3
 lto = "thin"
 codegen-units = 1
 strip = true
+
