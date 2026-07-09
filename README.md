@@ -1,12 +1,9 @@
 # Solana Arbitrage Bot
 
-It's a mainnet-ready flash loan execution script written in Rust which use Save Finance, DEX LP Swaps and Jito Tips
+It's a mainnet-ready flash loan execution script written in Rust which use Save Finance, Meteora DLMM Programm and Orca Finance. Also using Jito Bundles
 
-## TxIDs<br>
-### WSOL TX<br>
-https://solscan.io/tx/4fevWabW2bT7g3nzfhtrZE7JND7w6RJYSt7vi9tNWCFeASvi8GGHjTxcYWZ51d9xr8sg17P3HzbVwQ2EoFXiuZex<br>
-### USDC TX<br>
-https://solscan.io/tx/4PFwD4djdnEMdiQZUyrf3EJtGYaFY7z5qu2NLCGbHaq8rHHGtECdBwmA9tBsUAcghgHmaykY1Vx9gYpmVJh31fQY<br>
+## TxID<br>
+### https://solscan.io/tx/fyiBAa1hJbBHNh1A55BLoL79EU22nBB9C9NEG5Ds1tpStg9CobvGNYimso6ma9CS1VHydrXfufn2Le6gWvkHva6
 
 ## Setup
 
@@ -17,7 +14,7 @@ Second, create a .env file in the your project root.
 
 RPC_URL=https://helius-rpc.com/xxxxxxx<br>
 PRIVATE_KEY=xxxxx(base58)<br>
-ALT_ADDRESS=xxx (Address lookup tables. First create it)
+ALT_ADDRESS=xxx (Address lookup tables. First create it using solana-cli and command: <pre>solana address-lookup-table create</pre> )<br>
 
 And compile & start a script using ```cargo run``` 
 
@@ -25,10 +22,6 @@ And compile & start a script using ```cargo run```
 
 All protocol addresses are taken from the official Save Finance Docs. 
 They're there - https://docs.save.finance/architecture/addresses/mainnet/main-pools
-
-If you want to switch from USDC to SOL or USDT, you just need to swap the hardcoded Pubkeys constants in src/main.rs
-
-!!! Notice: If you borrowing SOL you must remember that $SOL has 9 decimals instead of USDC's 6!!!
   
 ## Returning 20% of fees
 
@@ -40,7 +33,9 @@ So, a total fee spliting on<br>
 ## How this code exploits it:
 In the repay_ix accounts vector, we pass our own wallet's ATA as the host_fee_receiver. Thus, by acting as our own host, we automatically save 20% of the loan costs.<br>
 
-Please, tips me =)<br>
-DdKQPiHdhgCACMvPe1UKH9aJ8KY415YW9eNC7ah6nzS7
+## WARNING!
+The code doesn't take into the complex mathematics of Meteora DLMM bins calculating. So, code doesnt take into slippage influence for large volumes during swap, make sure that you understand this
 
+Please, tips me if this repo was helpful<br>
+HogXprfJCbNSWRXeU3vkt9mM2AcXHrqnLVc6WP1wpQrS
 ## Created by [@trinitycult](https://t.me/trinitycult)
