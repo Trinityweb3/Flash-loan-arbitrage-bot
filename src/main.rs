@@ -1,9 +1,9 @@
 mod types;
-mod flashloan;
+mod handlers;
 mod meteora;
 
 use types::*;
-use flashloan::execute;
+use handlers::execute;
 use solana_rpc_client::nonblocking::rpc_client::RpcClient;
 use solana_commitment_config::CommitmentConfig;
 use solana_sdk::{pubkey::Pubkey, signature::Keypair, signer::Signer};
