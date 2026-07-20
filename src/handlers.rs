@@ -155,7 +155,7 @@ pub async fn execute(
     instructions.push(build_repay_instruction(protocol_config, asset, start_ata, fee_receiver_ata, payer.pubkey(), borrow_ix_index));
 
     let tip_pubkey: Pubkey = Pubkey::from_str(JITO_TIP4)?;
-    instructions.push(system_instruction::transfer(&payer.pubkey(), &tip_pubkey, 1_000));
+    // instructions.push(system_instruction::transfer(&payer.pubkey(), &tip_pubkey, 1_000));
 
     let pnl: i64 = current_amount as i64 - asset.loan_amount as i64;
     println!("Route PnL ~ {} lamports", pnl);
