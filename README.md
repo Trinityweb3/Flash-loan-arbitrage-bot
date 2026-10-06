@@ -36,6 +36,4 @@ In the repay_ix accounts vector, we pass our own wallet's ATA as the host_fee_re
 ## WARNING!
 The code doesn't take into the complex mathematics of Meteora DLMM bins calculating. So, code doesnt take into slippage influence for large volumes during swap, make sure that you understand this
 
-Please, tips me if this repo was helpful<br>
-HogXprfJCbNSWRXeU3vkt9mM2AcXHrqnLVc6WP1wpQrS
 ## Created by [@trinitycult](https://t.me/trinitycult)
