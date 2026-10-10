@@ -1,9 +1,11 @@
 # Solana Arbitrage Bot
 
-It's a mainnet-ready flash loan execution script written in Rust which use Save Finance, Meteora DLMM Programm and Orca Finance. Also using Jito Bundles
+A mainnet-ready flash loan execution client written in Rust. It utilizes Save Finance, Meteora DLMM, and Orca Finance to execute multi-hop arbitrage strategies, leveraging Jito Bundles for MEV protection and guaranteed atomic execution
 
-## TxID<br>
-### https://solscan.io/tx/fyiBAa1hJbBHNh1A55BLoL79EU22nBB9C9NEG5Ds1tpStg9CobvGNYimso6ma9CS1VHydrXfufn2Le6gWvkHva6
+
+### TxID
+* **Mainnet Transaction ID:** [View on Solscan](https://solscan.io/tx/fyiBAa1hJbBHNh1A55BLoL79EU22nBB9C9NEG5Ds1tpStg9CobvGNYimso6ma9CS1VHydrXfufn2Le6gWvkHva6)
+
 
 ## Setup
 
